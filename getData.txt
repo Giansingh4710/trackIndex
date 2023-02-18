@@ -1,7 +1,7 @@
 <?php
  header("Access-Control-Allow-Origin: *");
-/* $arr=array("name"=>"Jon","age"=>23); */
-/* echo json_encode($arr); */
+$arr=array("name"=>"Jon","age"=>23);
+echo json_encode($arr);
 
 
 
@@ -35,18 +35,23 @@ function printLiItem($str){
 }
 
 $lines = explode("\n",$filetext);
+var_dump($lines);
 $linesCount = count($lines)-1; //-1 becuase PHP weird.
 $objLst = array();
 for($i=1;$i<$linesCount;$i++){
   /* TimeAdded,Artist,Description,time,link,ShabadId */
   $strLst = explode(",",$lines[$i]);
-  $obj['timeAdded']=$strLst[0];
-  $obj['keertani']=$strLst[1];
-  $obj['description']=$strLst[2];
-  $obj['timeStamp']=$strLst[3];
-  $obj['link']=$strLst[4];
-  $obj['shabadId']=$strLst[5];
+  var_dump($strLst);
+  $obj = [
+    'timeAdded':$strLst[0];
+    'keertani':$strLst[1];
+    'description':$strLst[2];
+    'timeStamp':$strLst[3];
+    'link':$strLst[4];
+    'shabadId':$strLst[5];
+  ];
+  var_dump($obj);
   array_push($objLst,$obj);
 }
-echo json_encode($objLst);
+var_dump($objLst);
 ?>
