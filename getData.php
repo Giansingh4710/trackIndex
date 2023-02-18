@@ -50,4 +50,3 @@ for($i=1;$i<$linesCount;$i++){
 }
 echo json_encode($objLst);
 ?>
-
