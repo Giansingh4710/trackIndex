@@ -24,7 +24,7 @@
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
     background-color: turquoise;
     overflow-wrap: anywhere;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 
   .description,
@@ -172,8 +172,8 @@
     if (!res.ok)throw new Error("Something went wrong!");
     return res.json()
   }).then((data) => {
+      console.log(data)
       for(const obj of data){
-        obj.shabadId = obj.shabadId.slice(0,-1)
         ALL_TRACKS_DATA.push(obj)
       }
       displayData();
