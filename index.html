@@ -9,6 +9,13 @@
 </head>
 
 <style>
+  body {
+      font-family: -apple-system, blinkmacsystemfont, 'segoe ui', 'roboto', 'oxygen',
+        'ubuntu', 'cantarell', 'fira sans', 'droid sans', 'helvetica neue',
+        sans-serif;
+      text-align: center;
+      align-items: center;
+    }
   li {
     margin: 10px 0;
     padding: 20px;
@@ -71,6 +78,10 @@
     <input type="text" placeholder="Search..." oninput="searchForTrack(this.value)">
   </div>
 
+  <select id='pickKeertani' onchange="displayData()">
+    <option value='All'>All</option>
+  </select>
+
   <ol id='tracksOL'></ol>
 </body>
 
@@ -78,11 +89,15 @@
 <script>
   const ALL_TRACKS_DATA = [];
 
-  function displayData(objLst){
+  function displayData(objLst=ALL_TRACKS_DATA,filtered=false){
     const ol = document.getElementById('tracksOL')
     ol.innerHTML = '';
-    for(const obj of objLst){
-      console.log(obj)
+
+    let theData = objLst
+    if(!filtered)
+      theData = filtedDataByChosenOpt(objLst)
+
+    for(const obj of theData){
       const li = document.createElement('li')
       const div = document.createElement('div')
       div.setAttribute('class','eachTrack')
@@ -122,7 +137,7 @@
         const summary = document.createElement('summary')
         summary.innerText = obj.shabadId
         for(const line of allShabadsAdi[obj.shabadId])
-          details.innerText += line + '\n'
+        details.innerText += line + '\n'
         details.appendChild(summary)
         div.appendChild(details)
       }
@@ -135,7 +150,10 @@
   function searchForTrack(e){
     const ol = document.getElementById("tracksOL");
     const wordsEntered = e.toLowerCase().split(' ')
-    const results = ALL_TRACKS_DATA.filter(obj => {
+
+    const theData = filtedDataByChosenOpt()
+
+    const results = theData.filter(obj => {
       const values = Object.values(obj);
       if (obj.shabadId !="") values.push(...allShabadsAdi[obj.shabadId])
       for(const word of wordsEntered){
@@ -146,7 +164,7 @@
       }
       return true;
     });
-    displayData(results)
+    displayData(results,true)
   }
 
   fetch("http://45.76.2.28/trackIndex/getData.php").then((res) => {
@@ -157,10 +175,39 @@
         obj.shabadId = obj.shabadId.slice(0,-1)
         ALL_TRACKS_DATA.push(obj)
       }
-      displayData(ALL_TRACKS_DATA);
-  }).catch((err) => {
-    console.log(err)
-  })
+      displayData();
+      putOptsInSelect()
+    }).catch((err) => {
+      console.log(err)
+    })
+
+  function putOptsInSelect() {
+    const allKeertanis = []
+    ALL_TRACKS_DATA.forEach((track) => {
+      if (!allKeertanis.includes(track.keertani)) {
+        allKeertanis.push(track.keertani)
+      }
+    })
+
+    const select = document.getElementById('pickKeertani')
+    for (const keertani of allKeertanis) {
+      const opt = document.createElement('option')
+      opt.setAttribute('value', keertani)
+      opt.innerText = keertani
+      select.appendChild(opt)
+    }
+  }
+
+  function filtedDataByChosenOpt(){
+    const opt = document.getElementById('pickKeertani').value
+    return theData = ALL_TRACKS_DATA.filter((item) => {
+      if (opt == "All") {
+        return true
+      } else if (opt == item.keertani) {
+        return true
+      }
+    })
+  }
 
   function getTrackTitle(link){return link.replace(/%20/g, ' ').split('/').splice(-1)}
 </script>
