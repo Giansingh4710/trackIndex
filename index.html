@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracks Indexed</title>
+</head>
+
+<style>
+  li {
+    margin: 10px 0;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    background-color: turquoise;
+    /* overflow: hidden; */
+  }
+
+  .description,
+  .artist {
+    font-size: 1em;
+    font-weight: bold;
+    display: inline-block;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .link {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .link:hover {
+    background-color: #0062cc;
+  }
+
+  /* Search container */
+  .search-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Search input */
+  .search-container input[type="text"] {
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border: 4px solid #ccc;
+    font-size: 16px;
+  }
+</style>
+
+<body>
+  <div class="search-container">
+    <input type="text" placeholder="Search..." oninput="searchForTrack(this.value)">
+  </div>
+
+  <ol id='tracksOL'></ol>
+</body>
+
+<script type="text/javascript" src="./allShabads.js"></script>
+<script>
+  const ALL_TRACKS_DATA = [];
+
+  function displayData(objLst){
+    const ol = document.getElementById('tracksOL')
+    ol.innerHTML = '';
+    for(const obj of objLst){
+      console.log(obj)
+      const li = document.createElement('li')
+      const div = document.createElement('div')
+      div.setAttribute('class','eachTrack')
+
+      const divDesc = document.createElement('div')
+      const pDesc = document.createElement('p')
+      pDesc.setAttribute('class','description')
+      pDesc.innerText = `Description: ${obj.description}`
+      divDesc.appendChild(pDesc)
+      div.appendChild(divDesc)
+
+      const divArt = document.createElement('div')
+      const pArt = document.createElement('p')
+      pArt.setAttribute('class','artist')
+      pArt.innerText = `Keertani: ${obj.keertani}`
+      divArt.appendChild(pArt)
+      div.appendChild(divArt)
+
+      const divTime = document.createElement('div')
+      const pTime = document.createElement('p')
+      pTime.setAttribute('class','timestamp')
+      pTime.innerText = `Time Stamp: ${obj.timeStamp}`
+      divTime.appendChild(pTime)
+      div.appendChild(divTime)
+
+      const divLink = document.createElement('div')
+      const aLink = document.createElement('a')
+      aLink.setAttribute('class','link')
+      aLink.href = obj.link
+      aLink.innerText = getTrackTitle(obj.link)
+      divLink.appendChild(aLink)
+      div.appendChild(divLink)
+
+
+      if( obj.shabadId!=''){
+        const details = document.createElement('details')
+        const summary = document.createElement('summary')
+        summary.innerText = obj.shabadId
+        for(const line of allShabadsAdi[obj.shabadId])
+          details.innerText += line + '\n'
+        details.appendChild(summary)
+        div.appendChild(details)
+      }
+
+      li.appendChild(div)
+      ol.appendChild(li)
+    }
+  }
+
+  function searchForTrack(e){
+    const ol = document.getElementById("tracksOL");
+    const wordsEntered = e.toLowerCase().split(' ')
+    const results = ALL_TRACKS_DATA.filter(obj => {
+      const values = Object.values(obj);
+      if (obj.shabadId !="") values.push(...allShabadsAdi[obj.shabadId])
+      for(const word of wordsEntered){
+        const wordInTrackObj = values.some(line => line.toLowerCase().includes(word));
+        if(!wordInTrackObj){
+          return false;
+        }
+      }
+      return true;
+    });
+    displayData(results)
+  }
+
+  fetch("http://45.76.2.28/trackIndex/getData.php").then((res) => {
+    if (!res.ok)throw new Error("Something went wrong!");
+    return res.json()
+  }).then((data) => {
+      for(const obj of data){
+        obj.shabadId = obj.shabadId.slice(0,-1)
+        ALL_TRACKS_DATA.push(obj)
+      }
+      displayData(ALL_TRACKS_DATA);
+  }).catch((err) => {
+    console.log(err)
+  })
+
+  function getTrackTitle(link){return link.replace(/%20/g, ' ').split('/').splice(-1)}
+</script>
+
+</html>
