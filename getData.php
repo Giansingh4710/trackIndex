@@ -23,4 +23,3 @@ if (($handle = fopen("data.csv", "r")) !== FALSE) {
 
 echo json_encode($objLst);
 ?>
-
