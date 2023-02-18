@@ -10,12 +10,13 @@
 
 <style>
   body {
-      font-family: -apple-system, blinkmacsystemfont, 'segoe ui', 'roboto', 'oxygen',
-        'ubuntu', 'cantarell', 'fira sans', 'droid sans', 'helvetica neue',
-        sans-serif;
-      text-align: center;
-      align-items: center;
-    }
+    font-family: -apple-system, blinkmacsystemfont, 'segoe ui', 'roboto', 'oxygen',
+      'ubuntu', 'cantarell', 'fira sans', 'droid sans', 'helvetica neue',
+      sans-serif;
+    text-align: center;
+    align-items: center;
+  }
+
   li {
     margin: 10px 0;
     padding: 20px;
@@ -27,17 +28,78 @@
     /* overflow: hidden; */
   }
 
-  .description,
-  .artist {
-    font-size: 1em;
-    font-weight: bold;
-    display: inline-block;
+  #myModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* background-color: rgb(0, 0, 0); */
+    background-color: rgba(0, 0, 0, 0.4);
   }
 
+  #modal-content {
+    /* background-color: #fefefe; */
+    background-color: #ff7f50;
+    margin: auto;
+    padding: 2em;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 1em;
+  }
+
+  .userInputItem{
+    text-align: center;
+    align-items: center;
+    background-color: #0077be;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  #userKeertani{
+    align-self:center;
+    left:10%;
+  }
+
+  #closeModal {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  #closeModal:hover,
+  #closeModal:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #addTrackBtn {
+    /* color: white; */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px #888888;
+  }
+
+  #addTrack span {
+    font-size: 5em;
+  }
+
+  .description,
+  .artist,
   .timestamp {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 10px;
+    font-size: 1em;
+    font-weight: bold;
     display: inline-block;
   }
 
@@ -83,6 +145,45 @@
     <option value='All'>All</option>
   </select>
 
+  <div id="myModal">
+    <div id="modal-content">
+      <span id="closeModal">&times;</span>
+      <div class="userInputItem">
+        <label for="userDesc">Description:</label>
+        <input placeholder="bin ek naam ik chit leen" id="userDesc"></input>
+      </div>
+      <div class="userInputItem">
+        <label for="userKeertani">Keertani:</label>
+        <select id='userPickKeertani' onchange="modalSelectChanged()">
+          <option value='Add New'>Add New</option>
+        </select>
+        <input style="display:none" placeholder="SDO Ji" id="userKeertani"></input>
+      </div>
+      <div class="userInputItem">
+        <label for="userTimestamp">Timestamp of where Description Happened:</label>
+        <div id="userTimestamp">
+          <input id="hours"type="number" min="0" max="59" inputmode="numeric"></input>:
+          <input id="mins" type="number" min="0" max="59"></input>:
+          <input id="secs" type="number" min="0" max="59"></input>
+        </div>
+        <div id="userTimestamp">
+          <label for="hours">hours:</label>
+          <label for="mins">minutes:</label>
+          <label for="secs">seconds</label>
+        </div>
+      </div>
+      <div>
+        <button onclick="saveTrack()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="addTrack">
+    <button id="addTrackBtn">
+      <span>&#43;</span>
+    </button>
+  </div>
+
   <ol id='tracksOL'></ol>
 </body>
 
@@ -90,55 +191,55 @@
 <script>
   const ALL_TRACKS_DATA = [];
 
-  function displayData(objLst=ALL_TRACKS_DATA,filtered=false){
+  function displayData(objLst = ALL_TRACKS_DATA, filtered = false) {
     const ol = document.getElementById('tracksOL')
     ol.innerHTML = '';
 
     let theData = objLst
-    if(!filtered)
+    if (!filtered)
       theData = filtedDataByChosenOpt(objLst)
 
-    for(const obj of theData){
+    for (const obj of theData) {
       const li = document.createElement('li')
       const div = document.createElement('div')
-      div.setAttribute('class','eachTrack')
+      div.setAttribute('class', 'eachTrack')
 
       const divDesc = document.createElement('div')
       const pDesc = document.createElement('p')
-      pDesc.setAttribute('class','description')
+      pDesc.setAttribute('class', 'description')
       pDesc.innerText = `Description: ${obj.description}`
       divDesc.appendChild(pDesc)
       div.appendChild(divDesc)
 
       const divArt = document.createElement('div')
       const pArt = document.createElement('p')
-      pArt.setAttribute('class','artist')
+      pArt.setAttribute('class', 'artist')
       pArt.innerText = `Keertani: ${obj.keertani}`
       divArt.appendChild(pArt)
       div.appendChild(divArt)
 
       const divTime = document.createElement('div')
       const pTime = document.createElement('p')
-      pTime.setAttribute('class','timestamp')
+      pTime.setAttribute('class', 'timestamp')
       pTime.innerText = `Time Stamp: ${obj.timeStamp}`
       divTime.appendChild(pTime)
       div.appendChild(divTime)
 
       const divLink = document.createElement('div')
       const aLink = document.createElement('a')
-      aLink.setAttribute('class','link')
+      aLink.setAttribute('class', 'link')
       aLink.href = obj.link
       aLink.innerText = getTrackTitle(obj.link)
       divLink.appendChild(aLink)
       div.appendChild(divLink)
 
 
-      if( obj.shabadId!=''){
+      if (obj.shabadId != '') {
         const details = document.createElement('details')
         const summary = document.createElement('summary')
         summary.innerText = obj.shabadId
-        for(const line of allShabadsAdi[obj.shabadId])
-        details.innerText += line + '\n'
+        for (const line of allShabadsAdi[obj.shabadId])
+          details.innerText += line + '\n'
         details.appendChild(summary)
         div.appendChild(details)
       }
@@ -148,7 +249,7 @@
     }
   }
 
-  function searchForTrack(e){
+  function searchForTrack(e) {
     const ol = document.getElementById("tracksOL");
     const wordsEntered = e.toLowerCase().split(' ')
 
@@ -156,31 +257,17 @@
 
     const results = theData.filter(obj => {
       const values = Object.values(obj);
-      if (obj.shabadId !="") values.push(...allShabadsAdi[obj.shabadId])
-      for(const word of wordsEntered){
+      if (obj.shabadId != "") values.push(...allShabadsAdi[obj.shabadId])
+      for (const word of wordsEntered) {
         const wordInTrackObj = values.some(line => line.toLowerCase().includes(word));
-        if(!wordInTrackObj){
+        if (!wordInTrackObj) {
           return false;
         }
       }
       return true;
     });
-    displayData(results,true)
+    displayData(results, true)
   }
-
-  fetch("http://45.76.2.28/trackIndex/getData.php").then((res) => {
-    if (!res.ok)throw new Error("Something went wrong!");
-    return res.json()
-  }).then((data) => {
-      console.log(data)
-      for(const obj of data){
-        ALL_TRACKS_DATA.push(obj)
-      }
-      displayData();
-      putOptsInSelect()
-    }).catch((err) => {
-      console.log(err)
-    })
 
   function putOptsInSelect() {
     const allKeertanis = []
@@ -191,15 +278,21 @@
     })
 
     const select = document.getElementById('pickKeertani')
+    const selectModal = document.getElementById('userPickKeertani')
     for (const keertani of allKeertanis) {
       const opt = document.createElement('option')
       opt.setAttribute('value', keertani)
       opt.innerText = keertani
       select.appendChild(opt)
+
+      const optForModal = opt.cloneNode(true)
+      selectModal.prepend(optForModal)
     }
+    console.log("putOps")
+    modalSelectChanged() //so that the input field will get the value if modal not changed
   }
 
-  function filtedDataByChosenOpt(){
+  function filtedDataByChosenOpt() {
     const opt = document.getElementById('pickKeertani').value
     return theData = ALL_TRACKS_DATA.filter((item) => {
       if (opt == "All") {
@@ -210,7 +303,43 @@
     })
   }
 
-  function getTrackTitle(link){return link.replace(/%20/g, ' ').split('/').splice(-1)}
+  function modalStuff() {
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("addTrackBtn");
+    const span = document.getElementById("closeModal");
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = function (event) {
+      if (event.target == modal) {modal.style.display = "none";}
+    };
+  }
+
+  function modalSelectChanged(){
+    const opt = document.getElementById('userPickKeertani').value
+    const inputKeertani = document.getElementById('userKeertani')
+    if (opt==="Add New"){
+      inputKeertani.style.display = "block";
+    }else{
+      inputKeertani.style.display = "none";
+      inputKeertani.value = opt
+    }
+  }
+
+  function getTrackTitle(link) {return link.replace(/%20/g, ' ').split('/').splice(-1)}
+
+  fetch("http://45.76.2.28/trackIndex/getData.php").then((res) => {
+    if (!res.ok) throw new Error("Something went wrong!");
+    return res.json()
+  }).then((data) => {
+    for (const obj of data) {
+      ALL_TRACKS_DATA.push(obj)
+    }
+    displayData();
+    putOptsInSelect()
+  }).catch((err) => {
+    console.log(err)
+  })
+  modalStuff();
 </script>
 
 </html>
