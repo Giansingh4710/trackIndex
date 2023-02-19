@@ -4,10 +4,9 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-echo time();
-echo "<pre>";
-var_dump($_POST);
-echo "</pre>";
+//echo "<pre>";
+//var_dump($_POST);
+//echo "</pre>";
 
 $timestamp = "";
 if(!empty($_POST["hours"])){
@@ -22,6 +21,7 @@ if(!empty($_POST["secs"])){
   $timestamp .= $_POST["secs"];
 }
 
+$timestamp = $timestamp==""?"0:00": $timestamp;
 $line = array(time(), $_POST["keertani"], $_POST["description"], $timestamp, $_POST["link"], $_POST["shabadId"]);
 
 echo "<pre>";
@@ -31,6 +31,6 @@ echo "</pre>";
 $fp = fopen("data.csv", "a");
 fputcsv($fp, $line); # $line is an array of strings (array|string[])
 fclose($fp);
-echo "Put in CSV";
+echo "The Data has been added to the database";
 
 ?>
