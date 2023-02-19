@@ -70,28 +70,31 @@
     left: 10%;
   }
 
-  #sttmLink p{
+  #sttmLink p {
     display: inline;
   }
+
   #sttmLink {
     font-size: 0.6em;
   }
-  #highlightShabadId{
+
+  #highlightShabadId {
     font-weight: bold;
     font-size: 1.5em;
     color: greenyellow;
   }
 
   #closeModal {
-    color: #aaaaaa;
+    color: black;
     float: right;
-    font-size: 28px;
+    top: 500px;
+    font-size: 61px;
     font-weight: bold;
   }
 
   #closeModal:hover,
   #closeModal:focus {
-    color: #000;
+    color: #aaa;
     text-decoration: none;
     cursor: pointer;
   }
@@ -159,7 +162,8 @@
   </select>
 
   <div id="myModal">
-    <form id="modal-content" method="post" action="http://45.76.2.28/trackIndex/addData.php">
+    <form id="modal-content" onsubmit="formValidation(event)" method="post"
+      action="http://45.76.2.28/trackIndex/addData.php">
       <span id="closeModal">&times;</span>
       <div class="userInputItem">
         <label for="userDesc">Description:</label>
@@ -170,7 +174,7 @@
         <select id='userPickKeertani' onchange="modalSelectChanged()">
           <option value='Add New'>Add New</option>
         </select>
-        <input name="keertani" style="display:none" placeholder="SDO Ji" id="userKeertani"></input>
+        <input id="userKeertani" name="keertani" style="display:none" placeholder="SDO Ji"></input>
       </div>
       <div class="userInputItem">
         <label for="userLink">Link:</label>
@@ -182,15 +186,16 @@
         <input id="usedShabadId" name="shabadId" placeholder="687"></input>
         <a id="sttmLink" href="https://www.sikhitothemax.org/shabad?id=687&q=Ahrp&type=1&source=all&highlight=9290">
           <p>https://www.sikhitothemax.org/shabad?id=</p>
-          <p id="highlightShabadId">687</p><p>&q=Ahrp&type=1&source=all&highlight=9290</p>
+          <p id="highlightShabadId">687</p>
+          <p>&q=Ahrp&type=1&source=all&highlight=9290</p>
         </a>
       </div>
       <div class="userInputItem">
         <label for="userTimestamp">Timestamp of where Description Happened:</label>
         <div id="userTimestamp">
           <input name="hours" id="hours" type="number" min="0" max="59" inputmode="numeric"></input>:
-          <input name="mins" id="mins" type="number" min="0" max="59"></input>:
-          <input name="secs" id="secs" type="number" min="0" max="59"></input>
+          <input name="mins" id="mins" type="number" min="0" max="59" inputmode="numeric"></input>:
+          <input name="secs" id="secs" type="number" min="0" max="59" inputmode="numeric"></input>
         </div>
         <div id="userTimestamp">
           <label for="hours">hours:</label>
@@ -200,8 +205,6 @@
       </div>
       <button>Add</button>
     </form>
-  </div>
-  </div>
   </div>
 
   <div id="addTrack">
@@ -365,6 +368,20 @@
   }).catch((err) => {
     console.log(err)
   })
+
+  function formValidation(e) {
+    e.preventDefault()
+    const form = document.querySelector("#modal-content")
+
+    const desc = document.querySelector("#userDesc")
+    const keertani = document.querySelector("#userKeertani")
+    const link = document.querySelector("#userLink")
+    if (link.value === "") {
+      alert("Link is empty")
+    } else {
+      form.submit()
+    }
+  }
   modalStuff();
 </script>
 
