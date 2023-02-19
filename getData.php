@@ -6,10 +6,11 @@
 
 
 $objLst = array();
+//$fp = fopen("dataNew.csv", "w");
 if (($handle = fopen("data.csv", "r")) !== FALSE) {
   while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+    //fputcsv($fp, $data); # $line is an array of strings (array|string[])
     if($data[0]=="TimeAdded") continue;
-    /* TimeAdded,Artist,Description,time,link,ShabadId */
     $obj['timeAdded']=$data[0];
     $obj['keertani']=$data[1];
     $obj['description']=$data[2];
@@ -20,6 +21,7 @@ if (($handle = fopen("data.csv", "r")) !== FALSE) {
   }
   fclose($handle);
 }
+//fclose($fp);
 
 echo json_encode($objLst);
 ?>
