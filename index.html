@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -52,7 +52,7 @@
     border-radius: 1em;
   }
 
-  .userInputItem{
+  .userInputItem {
     text-align: center;
     align-items: center;
     background-color: #0077be;
@@ -64,9 +64,22 @@
     justify-content: center;
     flex-direction: column;
   }
-  #userKeertani{
-    align-self:center;
-    left:10%;
+
+  #userKeertani {
+    align-self: center;
+    left: 10%;
+  }
+
+  #sttmLink p{
+    display: inline;
+  }
+  #sttmLink {
+    font-size: 0.6em;
+  }
+  #highlightShabadId{
+    font-weight: bold;
+    font-size: 1.5em;
+    color: greenyellow;
   }
 
   #closeModal {
@@ -146,25 +159,38 @@
   </select>
 
   <div id="myModal">
-    <div id="modal-content">
+    <form id="modal-content" method="post" action="http://45.76.2.28/trackIndex/addData.php">
       <span id="closeModal">&times;</span>
       <div class="userInputItem">
         <label for="userDesc">Description:</label>
-        <input placeholder="bin ek naam ik chit leen" id="userDesc"></input>
+        <input id="userDesc" name="description" placeholder="bin ek naam ik chit leen"></input>
       </div>
       <div class="userInputItem">
         <label for="userKeertani">Keertani:</label>
         <select id='userPickKeertani' onchange="modalSelectChanged()">
           <option value='Add New'>Add New</option>
         </select>
-        <input style="display:none" placeholder="SDO Ji" id="userKeertani"></input>
+        <input name="keertani" style="display:none" placeholder="SDO Ji" id="userKeertani"></input>
+      </div>
+      <div class="userInputItem">
+        <label for="userLink">Link:</label>
+        <input type="url" id="userLink" name="link"
+          placeholder="http://sikhsoul.com/golden_khajana_files/mp3/Keertan/Bhai%20Joginder%20Singh%20Talwara/Man%20kio%20bairaag%20kurehigaa.mp3"></input>
+      </div>
+      <div class="userInputItem">
+        <label for="usedShabadId">Shabad ID:</label>
+        <input id="usedShabadId" name="shabadId" placeholder="687"></input>
+        <a id="sttmLink" href="https://www.sikhitothemax.org/shabad?id=687&q=Ahrp&type=1&source=all&highlight=9290">
+          <p>https://www.sikhitothemax.org/shabad?id=</p>
+          <p id="highlightShabadId">687</p><p>&q=Ahrp&type=1&source=all&highlight=9290</p>
+        </a>
       </div>
       <div class="userInputItem">
         <label for="userTimestamp">Timestamp of where Description Happened:</label>
         <div id="userTimestamp">
-          <input id="hours"type="number" min="0" max="59" inputmode="numeric"></input>:
-          <input id="mins" type="number" min="0" max="59"></input>:
-          <input id="secs" type="number" min="0" max="59"></input>
+          <input name="hours" id="hours" type="number" min="0" max="59" inputmode="numeric"></input>:
+          <input name="mins" id="mins" type="number" min="0" max="59"></input>:
+          <input name="secs" id="secs" type="number" min="0" max="59"></input>
         </div>
         <div id="userTimestamp">
           <label for="hours">hours:</label>
@@ -172,10 +198,10 @@
           <label for="secs">seconds</label>
         </div>
       </div>
-      <div>
-        <button onclick="saveTrack()">Save</button>
-      </div>
-    </div>
+      <button>Add</button>
+    </form>
+  </div>
+  </div>
   </div>
 
   <div id="addTrack">
@@ -237,7 +263,7 @@
       if (obj.shabadId != '') {
         const details = document.createElement('details')
         const summary = document.createElement('summary')
-        summary.innerText = obj.shabadId
+        summary.innerText = `Shabad ID: ${obj.shabadId}`
         for (const line of allShabadsAdi[obj.shabadId])
           details.innerText += line + '\n'
         details.appendChild(summary)
@@ -314,12 +340,12 @@
     };
   }
 
-  function modalSelectChanged(){
+  function modalSelectChanged() {
     const opt = document.getElementById('userPickKeertani').value
     const inputKeertani = document.getElementById('userKeertani')
-    if (opt==="Add New"){
+    if (opt === "Add New") {
       inputKeertani.style.display = "block";
-    }else{
+    } else {
       inputKeertani.style.display = "none";
       inputKeertani.value = opt
     }
@@ -331,7 +357,7 @@
     if (!res.ok) throw new Error("Something went wrong!");
     return res.json()
   }).then((data) => {
-    for (const obj of data) {
+    for (const obj of data.reverse()) {
       ALL_TRACKS_DATA.push(obj)
     }
     displayData();
