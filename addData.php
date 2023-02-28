@@ -10,18 +10,25 @@ error_reporting(E_ALL);
 
 $timestamp = "";
 if(!empty($_POST["hours"])){
-  $timestamp .= $_POST["hours"];
-  $timestamp .= ":";
-}
-if(!empty($_POST["mins"])){
-  $timestamp .= $_POST["mins"];
-  $timestamp .= ":";
-}
-if(!empty($_POST["secs"])){
-  $timestamp .= $_POST["secs"];
+  $timestamp = $_POST["hours"];
+}else{
+  $timestamp = "00";
 }
 
-$timestamp = $timestamp==""?"0:00": $timestamp;
+$timestamp .= ":";
+if(!empty($_POST["mins"])){
+  $timestamp .= $_POST["mins"];
+}else{
+  $timestamp .= "00";
+}
+
+$timestamp .= ":";
+if(!empty($_POST["secs"])){
+  $timestamp .= $_POST["secs"];
+}else{
+  $timestamp .= "00";
+}
+
 $line = array(time(), $_POST["keertani"], $_POST["description"], $timestamp, $_POST["link"], $_POST["shabadId"]);
 
 echo "<pre>";
@@ -32,5 +39,7 @@ $fp = fopen("data.csv", "a");
 fputcsv($fp, $line); # $line is an array of strings (array|string[])
 fclose($fp);
 echo "The Data has been added to the database";
+
+header("Location: http://santjikhata.us");
 
 ?>
