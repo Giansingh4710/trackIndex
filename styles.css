@@ -1,3 +1,7 @@
+html{
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #0074d9;
   font-family: -apple-system, blinkmacsystemfont, 'segoe ui', 'roboto', 'oxygen',
@@ -114,7 +118,7 @@ body {
   border-radius: 1em;
 }
 
-.trackNodeBtn {
+.trackNode {
   /* all: unset; */
   padding: 5px;
   margin: 5px;
@@ -146,19 +150,13 @@ body {
 }
 
 .artist,
-.link,
+.playTrackBtnWithTitle,
 .timestamp {
   display: inline-block;
   font-size: 12px;
   color: #768bf3;
   /* background-color:#F9CD39; */
   margin-right: 15px;
-}
-
-.link {
-  color: #333;
-  overflow-wrap: anywhere;
-  /* text-decoration: none; */
 }
 
 summary {
