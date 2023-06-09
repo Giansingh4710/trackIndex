@@ -32,6 +32,7 @@ function addToCsvFromPostRequest(){
 
   $line = array(time(), $_POST["keertani"], $_POST["description"], $timestamp, $_POST["link"], $_POST["shabadId"]);
 
+
   echo "<pre>";
   var_dump($line);
   echo "</pre>";
@@ -42,6 +43,10 @@ function addToCsvFromPostRequest(){
   echo "The Data has been added to the database";
 }
 
-addToCsvFromPostRequest()
+addToCsvFromPostRequest();
+if(isset($_POST["linkToGoTo"])){
+  header("Location: " . $_POST["linkToGoTo"] ); 
+}
+
 //header("Location: http://santjikhata.us");
 ?>
