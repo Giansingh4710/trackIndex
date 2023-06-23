@@ -4,9 +4,9 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-//echo "<pre>";
-//var_dump($_POST);
-//echo "</pre>";
+echo "<pre>";
+var_dump($_POST);
+echo "</pre>";
 
 function addToCsvFromPostRequest(){
   $timestamp = "";
@@ -45,7 +45,9 @@ function addToCsvFromPostRequest(){
 
 addToCsvFromPostRequest();
 if(isset($_POST["linkToGoTo"])){
-  header("Location: " . $_POST["linkToGoTo"] ); 
+  if ($_POST["linkToGoTo"] != "false"){
+    header("Location: " . $_POST["linkToGoTo"] ); 
+  }
 }
 
 //header("Location: http://santjikhata.us");
