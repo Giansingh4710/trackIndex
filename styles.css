@@ -20,19 +20,6 @@ body {
   border-radius: 10px;
 }
 
-#showModalBtn {
-  /* color: white; */
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 2px 2px 2px #888888;
-}
-
-#showModalDiv span {
-  font-size: 5em;
-}
-
-/* -------------------------------- */
 #current_playing_audio {
   display: none;
   background-color: #efdaf8;

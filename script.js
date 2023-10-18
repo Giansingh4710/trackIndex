@@ -65,8 +65,10 @@ function trackNodeBtnClicked(obj_id) {
   const obj = ALL_TRACKS_DATA.find((obj) => obj.id == obj_id)
   const current_playing_audio = document.getElementById('current_playing_audio')
   current_playing_audio.style.display = 'block'
-  document.getElementById('DescOfTrack').innerText = obj.description
-  document.getElementById('playingArtist').innerText = obj.keertani
+  document.getElementById('DescOfTrack').innerText = "Description: " + obj.description
+  document.getElementById('playingArtist').innerText = "Keertani: " + obj.keertani
+  document.getElementById('trackAdded').innerText = "Added: " + getFormatedTime(obj.timeAdded)
+
   document.getElementById('timeStampOfDecs').innerText = obj.timeStamp
   document.getElementById('TrackTitle').innerText = getTrackTitle(obj.link)
   document.getElementById('TrackTitle').href = obj.link
