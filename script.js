@@ -87,8 +87,24 @@ function trackNodeBtnClicked(obj_id) {
   document.getElementById('copyLink').onclick = function() {
     const url = new URL(window.location.href.split('?')[0].split('#')[0])
     url.searchParams.append('id', obj_id)
-    console.log(url)
-    navigator.clipboard.writeText(url.href)
+    const copyText = url.href
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(copyText)
+        .then(() => alert('Text Copied'))
+        .catch((err) => {
+          console.error('Failed to copy text: ', err)
+        })
+    } else {
+      const textArea = document.createElement('textarea')
+      textArea.value = copyText
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      alert('Text Copied (Fallback)')
+    }
+
   }
 
   const details = document.getElementById('trackShabadIdDetails')
@@ -211,6 +227,15 @@ function filterDataByChosenOpt() {
 function getTrackTitle(link) {
   return decodeURIComponent(link.replace(/%20/g, ' ').split('/').splice(-1))
 }
+
+function showShabads() {
+  const detailsElements = document.querySelectorAll('details');
+  for(let i=1; i<detailsElements.length; i++){
+    const details = detailsElements[i]
+    details.open = !details.open
+  }
+}
+
 
 fetch('http://45.76.2.28/trackIndex/getData.php')
   .then((res) => {
