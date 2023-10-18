@@ -104,7 +104,6 @@ function trackNodeBtnClicked(obj_id) {
       document.body.removeChild(textArea)
       alert('Text Copied (Fallback)')
     }
-
   }
 
   const details = document.getElementById('trackShabadIdDetails')
@@ -129,7 +128,7 @@ function getFormatedTime(unixTimeStamp) {
 }
 
 function displayData(alreadyFiltered = false) {
-  const ol = document.getElementById('trackNodes')
+  const ol = document.getElementsByTagName('ol')[0]
   ol.innerHTML = ''
 
   if (!alreadyFiltered) filterDataByChosenOpt()
@@ -146,11 +145,13 @@ function displayData(alreadyFiltered = false) {
     li.innerHTML = `
         <div class="topBarLine">
           <div class="nodeNum"># ${obj.id}</div>
-          <div class="description">Description: ${obj.description}</div>
+          <div class="description">${obj.description}</div>
+        </div>
+        <div class="middleDetail">
+          <div class="artist">Keertani: ${obj.keertani}</div>
+          <div class="timestamp">Time Stamp: ${obj.timeStamp}</div>
           <div class="timeadded">Added: ${getFormatedTime(obj.timeAdded)}</div>
         </div>
-        <div class="artist">Keertani: ${obj.keertani}</div>
-        <div class="timestamp">Time Stamp: ${obj.timeStamp}</div>
         <button class="playTrackBtnWithTitle" onclick="trackNodeBtnClicked(${obj.id
       })">
           ${getTrackTitle(obj.link)}
@@ -229,13 +230,12 @@ function getTrackTitle(link) {
 }
 
 function showShabads() {
-  const detailsElements = document.querySelectorAll('details');
-  for(let i=1; i<detailsElements.length; i++){
+  const detailsElements = document.querySelectorAll('details')
+  for (let i = 1; i < detailsElements.length; i++) {
     const details = detailsElements[i]
     details.open = !details.open
   }
 }
-
 
 fetch('http://45.76.2.28/trackIndex/getData.php')
   .then((res) => {
