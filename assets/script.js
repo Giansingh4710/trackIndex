@@ -57,6 +57,7 @@ function findShabadsKey(searchInput) {
 function scrollToDivAccodingToUrl() {
   const urlParams = new URLSearchParams(window.location.search)
   const theId = urlParams.get('id')
+  if (!theId) return
   document.getElementById(theId).getElementsByTagName('button')[0].click()
   // document.getElementById(theId).scrollIntoView();
 }
@@ -119,8 +120,8 @@ function trackNodeBtnClicked(obj_id) {
     details.style.display = 'none'
   }
 
-  document.getElementById('current_playing_audio').scrollIntoView()
   document.getElementById('timeStampOfDecs').click() // to start playing
+  // document.getElementById('current_playing_audio').scrollIntoView()
 }
 
 function getFormatedTime(unixTimeStamp) {
@@ -239,7 +240,15 @@ function showShabads() {
   }
 }
 
-fetch('http://45.76.2.28/trackIndex/getData.php')
+function toggle_descend_order() {
+  SHOW_TRACKS_DATA.reverse()
+  displayData(true)
+  const btn = document.getElementById("descend_order_btn")
+  console.log(btn.innerText)
+  btn.innerText = SHOW_TRACKS_DATA[0].id > SHOW_TRACKS_DATA[1].id ? "Ascending Order" : "Descending Order"
+}
+
+fetch('http://45.76.2.28/trackIndex/util/getData.php')
   .then((res) => {
     if (!res.ok) throw new Error('Something went wrong!')
     return res.json()

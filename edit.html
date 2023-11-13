@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Data</title>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="./util/data.csv">Data.csv</a>
+    <button>Save Changes</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Shabad Id</th>
+          <th>Artist</th>
+          <th>Description</th>
+          <th>timestamp</th>
+          <th>link</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+  <script type="text/javascript">
+    const ALL_TRACKS_DATA = []
+    function show_data() {
+      const tbody = document.getElementsByTagName('tbody')[0]
+      for (let i = ALL_TRACKS_DATA.length - 1; i > -1; i--) {
+        const track = ALL_TRACKS_DATA[i]
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+        <td>${track.id}</td>
+        <td>${track.keertani}</td>
+        <td>${track.description}</td>
+        <td>${track.timeStamp}</td>
+        <td>${track.link}</td>
+        `
+        const tds = tr.getElementsByTagName('td')
+        for(const td of tds){
+          td.contentEditable = true
+        }
+        tbody.appendChild(tr)
+      }
+    }
+
+    fetch('http://45.76.2.28/trackIndex/util/getData.php')
+      .then((res) => {
+        if (!res.ok) throw new Error('Something went wrong!')
+        return res.json()
+      })
+      .then((data) => {
+        for (let i = 0; i < data.length; i++) {
+          const obj = data[i]
+          obj.id = `${i + 1}`
+          ALL_TRACKS_DATA.push(obj)
+        }
+        show_data()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  </script>
+</html>
