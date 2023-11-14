@@ -46,9 +46,10 @@ function addToCsvFromPostRequest(){
 addToCsvFromPostRequest();
 if(isset($_POST["linkToGoTo"])){
   if ($_POST["linkToGoTo"] != "false"){
-    header("Location: " . $_POST["linkToGoTo"] ); 
+    $originalUrl = $_POST["linkToGoTo"];
+    $urlWithoutParameters = strtok($originalUrl, '?');
+    header("Location: " . $urlWithoutParameters);
+    // header("Location: " . $_POST["linkToGoTo"] ); 
   }
 }
-
-//header("Location: http://santjikhata.us");
 ?>
