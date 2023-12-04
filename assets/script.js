@@ -216,6 +216,21 @@ function putOptsInSelect() {
   }
 }
 
+function filter_keertani_from_url() {
+  const urlParams = new URLSearchParams(window.location.search)
+  const artist = urlParams.get('artist')
+  if (!artist) return
+  const select = document.getElementById('pickKeertani')
+  for (const opt of select.options) {
+    if (opt.innerText == artist){
+      opt.selected = true
+      break
+    }
+  }
+  filterDataByChosenOpt()
+}
+
+
 function filterDataByChosenOpt() {
   const opt = document.getElementById('pickKeertani').value
   localStorage.setItem('keertani', opt)
@@ -261,7 +276,8 @@ fetch('http://45.76.2.28/trackIndex/util/getData.php')
     }
     SHOW_TRACKS_DATA = ALL_TRACKS_DATA
     putOptsInSelect()
-    displayData()
+    filter_keertani_from_url()
+    displayData(true)
     scrollToDivAccodingToUrl()
   })
   .catch((err) => {
