@@ -2,7 +2,12 @@
 
 function make_backup(){
   $sourceFilePath = 'data.csv';
-  $backUpFilePath_base = './backup_data/data';
+
+  $baseFolderPath = "backup_data";
+  if (!file_exists($baseFolderPath)) {
+    mkdir($baseFolderPath, 0755, true);  // Adjust the permissions as needed
+  }
+  $backUpFilePath_base = $baseFolderPath . '/data';
 
   $counter = 1;
   $backUp_file = $backUpFilePath_base . '.csv';

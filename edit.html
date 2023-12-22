@@ -398,6 +398,8 @@
       const track2 = obj[i]
       for(const key of  keys){
         if(track1[key] !== track2[key]){
+          console.log(track1[key], track2[key])
+          console.log(track1, track2)
           return true
         }
       }
@@ -412,6 +414,7 @@
 
     const dataToSend = get_data_to_send()
     const changed = data_has_changed(dataToSend)  
+    console.log(changed)
     if(!changed) {
       alert('No changes to save')
       return
@@ -428,6 +431,7 @@
     })
       .then((response) => {
         if (!response.ok) {
+          console.log(response)
           throw new Error('Network response was not ok')
         }
         alert('Data successfully sent to the server')
