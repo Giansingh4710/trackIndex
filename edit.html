@@ -1,83 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Data</title>
-    <style>
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-      }
 
-      td,
-      th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Data</title>
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
 
-      tr:nth-child(even) {
-        background-color: #dddddd;
-      }
-    </style>
-  </head>
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
 
-  <body>
-    <a href="./util/data.csv">Data.csv</a>
-    <button>Save Changes</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Shabad Id</th>
-          <th>Artist</th>
-          <th>Description</th>
-          <th>timestamp</th>
-          <th>link</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </body>
-  <script type="text/javascript">
-    const ALL_TRACKS_DATA = []
-    function show_data() {
-      const tbody = document.getElementsByTagName('tbody')[0]
-      for (let i = ALL_TRACKS_DATA.length - 1; i > -1; i--) {
-        const track = ALL_TRACKS_DATA[i]
-        const tr = document.createElement('tr')
-        tr.innerHTML = `
-        <td>${track.id}</td>
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+    #search_for_sbd {
+      display: flex;
+      flex-direction: column;
+      background-color: #89DB6D;
+      align-items: center;
+    }
+
+    .search_sbd_item {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+    }
+
+    #shabadId_list_opts {}
+
+    .shabad_opt_from_userinput {
+      background-color: white;
+      font-size: 0.5em;
+      margin: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="search_for_sbd">
+    <div class="search_sbd_item">
+      <label for="input_sbd_id">Shabad ID</label>
+      <input id="input_sbd_id" placeholder="756" oninput="get_sbd_from_id()"></input>
+    </div>
+
+    <div class="search_sbd_item">
+      <label for="first_letter_sbd">Find Shabad (First letters)</label>
+      <input list="shabadId_list_opts" id="first_letter_sbd" name="shabadId" placeholder="ਤਕਮਲ"
+        oninput="get_sbds_first_letters()"></input>
+      <div id="shabadId_list_opts"></div>
+    </div>
+
+    <div class="search_sbd_item">
+      <details id="sbdDetails">
+        <summary>Shabad ID</summary>
+        <div></div>
+      </details>
+    </div>
+  </div>
+
+  <a href="./util/data.csv">data.csv</a>
+  <button onclick="save_changes()">Save Changes</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item #</th>
+        <th>Shabad Id</th>
+        <th>Keertani</th>
+        <th>Description</th>
+        <th>timestamp</th>
+        <th>link</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</body>
+<script type="text/javascript" src="./assets/allShabads.js"></script>
+<script type="text/javascript">
+  const ALL_TRACKS_DATA = []
+
+  function show_data() {
+    console.log(ALL_TRACKS_DATA[0])
+
+    const tbody = document.getElementsByTagName('tbody')[0]
+    for (let i = ALL_TRACKS_DATA.length - 1; i > -1; i--) {
+      const track = ALL_TRACKS_DATA[i]
+      const tr = document.createElement('tr')
+      tr.innerHTML = `
+        <td>${track.item_num}</td>
+        <td>${track.shabadId}</td>
         <td>${track.keertani}</td>
         <td>${track.description}</td>
         <td>${track.timeStamp}</td>
         <td>${track.link}</td>
         `
-        const tds = tr.getElementsByTagName('td')
-        for(const td of tds){
-          td.contentEditable = true
-        }
-        tbody.appendChild(tr)
+      const tds = tr.getElementsByTagName('td')
+      for (let i = 1; i < tds.length; i++) {
+        const td = tds[i]
+        td.contentEditable = true
       }
+      tbody.appendChild(tr)
+    }
+  }
+
+  function get_data_to_send() {
+    const tbody = document.getElementsByTagName('tbody')[0]
+
+    const trs = tbody.getElementsByTagName('tr')
+    if (trs.length !== ALL_TRACKS_DATA.length) {
+      alert("Weird ERROR!")
+      return
+    }
+    const return_data = []
+    for (let i = ALL_TRACKS_DATA.length - 1; i > -1; i--) {
+      const track = ALL_TRACKS_DATA[i]
+      const tds = trs[i].getElementsByTagName('td')
+      return_data.push({
+        ...track,
+        keertani: tds[2].textContent,
+        description: tds[3].textContent,
+        timeStamp: tds[4].textContent,
+        link: tds[5].textContent,
+        shabadId: parseInt(tds[1].textContent),
+      })
+    }
+    return return_data
+  }
+
+  function get_sbd_from_id() {
+    const input = document.getElementById('input_sbd_id').value
+    const id = parseInt(input)
+    show_shabad_in_detail(id)
+  }
+
+  function show_shabad_in_detail(shabadId) {
+    const sbdDetails = document.getElementById('sbdDetails')
+    const summaryTag = sbdDetails.getElementsByTagName('summary')[0]
+    const fullSbdDiv = sbdDetails.getElementsByTagName('div')[0]
+
+    summaryTag.textContent = shabadId
+    fullSbdDiv.innerHTML = ALL_SHABADS[shabadId].join('<br>')
+    sbdId_input_tag.value = shabadId
+  }
+
+  function get_sbds_first_letters() {
+    function findShabadsKey(search_input) {
+      function first_letters_gurmukhi(words) {
+        if (typeof words !== 'string') return words
+
+        let newWords = words
+
+        const reverseMapping = {
+          ਉ: 'ੳ',
+          ਊ: 'ੳ',
+          ਆ: 'ਅ',
+          ਆਂ: 'ਅ',
+          ਐ: 'ਅ',
+          ਔ: 'ਅ',
+          ਇ: 'ੲ',
+          ਈ: 'ੲ',
+          ਏ: 'ੲ',
+          // 'ੋੁ': 'uo',
+        }
+
+        const simplifications = [
+          ['E', 'a'],
+          ['ਓ', 'ੳ'],
+          ['L', 'l'],
+          ['ਲ਼', 'ਲ'],
+          ['S', 's'],
+          ['ਸ਼', 'ਸ'],
+          ['z', 'j'],
+          ['ਜ਼', 'ਜ'],
+          ['Z', 'g'],
+          ['ਗ਼', 'ਗ'],
+          ['\\^', 'K'],
+          ['ਖ਼', 'ਖ'],
+          ['ƒ', 'n'],
+          ['ਨੂੰ', 'ਨ'],
+          ['&', 'P'],
+          ['ਫ਼', 'ਫ'],
+        ]
+        simplifications.forEach((e) => {
+          newWords = newWords.replace(new RegExp(e[0], 'g'), e[1])
+        })
+
+        newWords = newWords
+          .replace(/\]/g, '')
+          .replace(/\[/g, '')
+          .replace(/॥/g, '')
+          .replace(/।/g, '')
+          .replace(/rhwau dUjw/g, '')
+          .replace(/rhwau/g, '')
+          .replace(/[0-9]/g, '')
+          .replace(/[;,.]/g, '')
+
+        function firstLetter(word) {
+          let letter = word[0]
+          if (letter in reverseMapping) {
+            letter = reverseMapping[letter]
+          }
+          return letter
+        }
+
+        const letters = newWords.split(' ').map(firstLetter).join('')
+        return letters
+      }
+
+      if (search_input.length < 3) return {}
+      for (let i = 0; i < search_input.length; i++) {
+        const c = search_input[i]
+        if (c >= '0' && c <= '9') {
+          console.log("num in search input")
+          return;
+        }
+      }
+      const all_matched_shabad_keys = {}
+      for (const key in ALL_SHABADS) {
+        const shabadArray = ALL_SHABADS[key]
+
+        for (let pu_ln_idx = 0; pu_ln_idx < shabadArray.length; pu_ln_idx += 3) {
+          const line = shabadArray[pu_ln_idx]
+          // for (const line of shabadArray) {
+          const first_letters = first_letters_gurmukhi(line)
+
+          let line_matched = true
+          for (let i = 0; i < search_input.length; i++) {
+            if (!line_matched) break
+            if (
+              first_letters.length === i ||
+              first_letters[i] !== search_input[i]
+            ) {
+              line_matched = false
+            }
+          }
+
+          if (line_matched) {
+            all_matched_shabad_keys[key] = pu_ln_idx
+            break
+          }
+        }
+      }
+      return all_matched_shabad_keys
     }
 
-    fetch('http://45.76.2.28/trackIndex/util/getData.php')
-      .then((res) => {
-        if (!res.ok) throw new Error('Something went wrong!')
-        return res.json()
-      })
-      .then((data) => {
-        for (let i = 0; i < data.length; i++) {
-          const obj = data[i]
-          obj.id = `${i + 1}`
-          ALL_TRACKS_DATA.push(obj)
+    const sbdId_input_tag = document.getElementById('first_letter_sbd')
+    const user_input = sbdId_input_tag.value
+    const list_opts = document.getElementById('shabadId_list_opts')
+
+
+    list_opts.innerHTML = ''
+    if (user_input === '') return
+
+    let max_items_to_show = 10
+
+    const mapping = {
+      a: 'ੳ',
+      A: 'ਅ',
+      s: 'ਸ',
+      S: 'ਸ਼',
+      d: 'ਦ',
+      D: 'ਧ',
+      f: 'ਡ',
+      F: 'ਢ',
+      g: 'ਗ',
+      G: 'ਘ',
+      h: 'ਹ',
+      H: '੍ਹ',
+      j: 'ਜ',
+      J: 'ਝ',
+      k: 'ਕ',
+      K: 'ਖ',
+      l: 'ਲ',
+      L: 'ਲ਼',
+      q: 'ਤ',
+      Q: 'ਥ',
+      w: 'ਾ',
+      W: 'ਾਂ',
+      e: 'ੲ',
+      E: 'ਓ',
+      r: 'ਰ',
+      R: '੍ਰ',
+      '®': '੍ਰ',
+      t: 'ਟ',
+      T: 'ਠ',
+      y: 'ੇ',
+      Y: 'ੈ',
+      u: 'ੁ',
+      ü: 'ੁ',
+      U: 'ੂ',
+      '¨': 'ੂ',
+      i: 'ਿ',
+      I: 'ੀ',
+      o: 'ੋ',
+      O: 'ੌ',
+      p: 'ਪ',
+      P: 'ਫ',
+      z: 'ਜ਼',
+      Z: 'ਗ਼',
+      x: 'ਣ',
+      X: 'ਯ',
+      c: 'ਚ',
+      C: 'ਛ',
+      v: 'ਵ',
+      V: 'ੜ',
+      b: 'ਬ',
+      B: 'ਭ',
+      n: 'ਨ',
+      ƒ: 'ਨੂੰ',
+      N: 'ਂ',
+      ˆ: 'ਂ',
+      m: 'ਮ',
+      M: 'ੰ',
+      µ: 'ੰ',
+      '`': 'ੱ',
+      '~': 'ੱ',
+      '¤': 'ੱ',
+      Í: '੍ਵ',
+      ç: '੍ਚ',
+      '†': '੍ਟ',
+      œ: '੍ਤ',
+      '˜': '੍ਨ',
+      '´': 'ੵ',
+      Ï: 'ੵ',
+      æ: '਼',
+      Î: '੍ਯ',
+      ì: 'ਯ',
+      í: '੍ਯ',
+      // 1: '੧',
+      // 2: '੨',
+      // 3: '੩',
+      // 4: '੪',
+      // 5: '੫',
+      // 6: '੬',
+      // '^': 'ਖ਼',
+      // 7: '੭',
+      // '&': 'ਫ਼',
+      // 8: '੮',
+      // 9: '੯',
+      // 0: '੦',
+      '\\': 'ਞ',
+      '|': 'ਙ',
+      '[': '।',
+      ']': '॥',
+      '<': 'ੴ',
+      '¡': 'ੴ',
+      Å: 'ੴ',
+      Ú: 'ਃ',
+      Ç: '☬',
+      '@': 'ੑ',
+      '‚': '❁',
+      '•': '੶',
+      ' ': ' ',
+    }
+
+    const gurmukhi_input = user_input
+      .split('')
+      .map((char) => mapping[char] || char)
+      .join('')
+    sbdId_input_tag.value = gurmukhi_input
+
+    const keyObj = findShabadsKey(gurmukhi_input)
+    for (let shabad_key in keyObj) {
+      const line_ind = keyObj[shabad_key]
+      const sbd = ALL_SHABADS[shabad_key]
+      console.log(line_ind)
+      const opt = document.createElement('button')
+
+      opt.classList.add('shabad_opt_from_userinput')
+      opt.onclick = (e) => {
+        show_shabad_in_detail(shabad_key)
+      }
+      opt.innerText = sbd[line_ind]
+      list_opts.appendChild(opt)
+      max_items_to_show -= 1
+      if (max_items_to_show < 0) break
+    }
+  }
+
+  function data_has_changed(obj){
+    const keys = Object.keys(ALL_TRACKS_DATA[0])
+
+    for (let i = ALL_TRACKS_DATA.length - 1; i > -1; i--) {
+      const track1 = ALL_TRACKS_DATA[i]
+      const track2 = obj[i]
+      for(const key of  keys){
+        if(track1[key] !== track2[key]){
+          return true
         }
-        show_data()
+      }
+    }
+    return false
+  }
+
+
+  function save_changes() {
+    const confirmed = confirm('Are you sure you want to save changes?')
+    if (!confirmed) return
+
+    const dataToSend = get_data_to_send()
+    const changed = data_has_changed(dataToSend)  
+    if(!changed) {
+      alert('No changes to save')
+      return
+    }
+
+    const stringed_data = JSON.stringify(dataToSend)
+
+    fetch('http://45.76.2.28/trackIndex/util/saveEditFile.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: stringed_data,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        alert('Data successfully sent to the server')
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        alert('There was a problem with the fetch operation: ', error.message)
+        console.error('There was a problem with the fetch operation:', error)
       })
-  </script>
+  }
+
+  // fetch('./util/data.csv')
+  fetch('http://45.76.2.28/trackIndex/util/getData.php')
+    .then((res) => {
+      if (!res.ok) throw new Error('Something went wrong!')
+      return res.json()
+    })
+    .then((data) => {
+      for (let i = 0; i < data.length; i++) {
+        const obj = data[i]
+        obj.item_num = `${i + 1}`
+        ALL_TRACKS_DATA.push(obj)
+      }
+      show_data()
+    })
+    .catch((err) => {
+      console.log(err)
+      alert(err)
+    })
+</script>
+
 </html>
