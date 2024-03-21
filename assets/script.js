@@ -67,17 +67,17 @@ function trackNodeBtnClicked(obj_id) {
   const current_playing_audio = document.getElementById('current_playing_audio')
   current_playing_audio.style.display = 'block'
   document.getElementById('DescOfTrack').innerText = "Description: " + obj.description
-  document.getElementById('playingArtist').innerText = "Keertani: " + obj.keertani
-  document.getElementById('trackAdded').innerText = "Added: " + getFormatedTime(obj.timeAdded)
+  document.getElementById('playingArtist').innerText = "Keertani: " + obj.artist
+  document.getElementById('trackAdded').innerText = "Added: " + getFormatedTime(obj.created)
 
-  document.getElementById('timeStampOfDecs').innerText = obj.timeStamp
+  document.getElementById('timeStampOfDecs').innerText = obj.timestamp
   document.getElementById('TrackTitle').innerText = getTrackTitle(obj.link)
   document.getElementById('TrackTitle').href = obj.link
 
   document.getElementsByTagName('audio')[0].src = obj.link
 
   document.getElementById('timeStampOfDecs').onclick = function() {
-    const timeLst = obj.timeStamp.split(':')
+    const timeLst = obj.timestamp.split(':')
     let totalSeconds = 0
     let muliplier = 1
     for (let i = timeLst.length - 1; i > -1; i--) {
@@ -110,10 +110,10 @@ function trackNodeBtnClicked(obj_id) {
   }
 
   const details = document.getElementById('trackShabadIdDetails')
-  if (obj.shabadId != '' && ALL_SHABADS[obj.shabadId]) {
+  if (obj.shabadID != '' && ALL_SHABADS[obj.shabadID]) {
     const summary = document.createElement('summary')
-    summary.innerText = `Shabad ID: ${obj.shabadId}`
-    details.innerText = ALL_SHABADS[obj.shabadId].join('\n')
+    summary.innerText = `Shabad ID: ${obj.shabadID}`
+    details.innerText = ALL_SHABADS[obj.shabadID].join('\n')
     details.appendChild(summary)
     details.style.display = 'block'
   } else {
@@ -151,20 +151,20 @@ function displayData(alreadyFiltered = false) {
           <div class="description">${obj.description}</div>
         </div>
         <div class="middleDetail">
-          <div class="artist">Keertani: ${obj.keertani}</div>
-          <div class="timestamp">Time Stamp: ${obj.timeStamp}</div>
-          <div class="timeadded">Added: ${getFormatedTime(obj.timeAdded)}</div>
+          <div class="artist">Keertani: ${obj.artist}</div>
+          <div class="timestamp">Time Stamp: ${obj.timestamp}</div>
+          <div class="timeadded">Added: ${getFormatedTime(obj.created)}</div>
         </div>
         <button class="playTrackBtnWithTitle" onclick="trackNodeBtnClicked(${obj.id
       })">
           ${getTrackTitle(obj.link)}
         </button>
       `
-    if (obj.shabadId != '' && ALL_SHABADS[obj.shabadId]) {
+    if (obj.shabadID != '' && ALL_SHABADS[obj.shabadID]) {
       li.innerHTML += `
         <details>
-          <summary>Shabad ID: ${obj.shabadId}</summary>
-          ${ALL_SHABADS[obj.shabadId].join('<br>')}
+          <summary>Shabad ID: ${obj.shabadID}</summary>
+          ${ALL_SHABADS[obj.shabadID].join('<br>')}
         </details>`
     }
     ol.appendChild(li)
@@ -178,8 +178,8 @@ function searchForTrack(e) {
 
   SHOW_TRACKS_DATA = SHOW_TRACKS_DATA.filter((obj) => {
     const values = Object.values(obj)
-    if (obj.shabadId != '' && ALL_SHABADS[obj.shabadId]) {
-      values.push(ALL_SHABADS[obj.shabadId].join('\n'))
+    if (obj.shabadID != '' && ALL_SHABADS[obj.shabadID]) {
+      values.push(ALL_SHABADS[obj.shabadID].join('\n'))
     }
 
     for (const word of wordsEntered) {
@@ -198,8 +198,8 @@ function searchForTrack(e) {
 function putOptsInSelect() {
   const allKeertanis = []
   ALL_TRACKS_DATA.forEach((track) => {
-    if (!allKeertanis.includes(track.keertani)) {
-      allKeertanis.push(track.keertani)
+    if (!allKeertanis.includes(track.artist)) {
+      allKeertanis.push(track.artist)
     }
   })
 
@@ -239,7 +239,7 @@ function filterDataByChosenOpt() {
     return
   }
   SHOW_TRACKS_DATA = ALL_TRACKS_DATA.filter((item) => {
-    return opt == item.keertani
+    return opt == item.artist
   })
 }
 
