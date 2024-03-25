@@ -4,17 +4,20 @@
 /* echo json_encode($arr); */
 
 
-echo "<pre>";
-var_dump($_GET);
-echo "</pre>";
-return
+//echo "<pre>";
+//var_dump($_GET);
+//echo "</pre>";
 
 $type = $_GET["type"];
 $objLst = array();
 //$fp = fopen("dataNew.csv", "w");
 if (($handle = fopen("data.csv", "r")) !== FALSE) {
   while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-    if($data[1] != $type){ continue; }
+    if( !is_null($type) ){
+      if( $data[1] != $type ){
+        continue; 
+      }
+    }
 
     $obj['created']=$data[0];
     $obj['type']=$data[1];
