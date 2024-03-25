@@ -4,20 +4,17 @@
 /* echo json_encode($arr); */
 
 
+echo "<pre>";
+var_dump($_GET);
+echo "</pre>";
+return
 
+$type = $_GET["type"];
 $objLst = array();
 //$fp = fopen("dataNew.csv", "w");
 if (($handle = fopen("data.csv", "r")) !== FALSE) {
   while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-    //fputcsv($fp, $data); # $line is an array of strings (array|string[])
-    // created,type,artist,timestamp,shabadID,description,link
-    if($data[0]=="TimeAdded") continue;
-    // $obj['timeAdded']=$data[0];
-    // $obj['keertani']=$data[1];
-    // $obj['description']=$data[2];
-    // $obj['timeStamp']=$data[3];
-    // $obj['link']=$data[4];
-    // $obj['shabadId']=$data[5];
+    if($data[1] != $type){ continue; }
 
     $obj['created']=$data[0];
     $obj['type']=$data[1];
@@ -30,7 +27,6 @@ if (($handle = fopen("data.csv", "r")) !== FALSE) {
   }
   fclose($handle);
 }
-//fclose($fp);
 
 echo json_encode($objLst);
 ?>

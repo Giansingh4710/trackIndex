@@ -81,7 +81,8 @@ audio{
 .artist,
 .playTrackBtnWithTitle,
 .timestamp,
-.timeadded {
+.timeadded,
+.trackType {
   flex: 1;
   display: inline-block;
   font-size: 12px;
