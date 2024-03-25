@@ -296,6 +296,7 @@ fetch('http://45.76.2.28/trackIndex/util/getData.php')
   })
   .then((data) => {
     for (let i = 0; i < data.length; i++) {
+      if (i===0) continue
       const obj = data[i]
       obj.id = `${i + 1}`
       ALL_TRACKS_DATA.push(obj)
