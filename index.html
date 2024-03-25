@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -34,16 +34,28 @@
       <details id="trackShabadIdDetails"></details>
     </div>
 
-    <select id="pickKeertani" onchange="displayData()">
-      <option value="All">All</option>
-    </select>
+    <div>
+      <label for="pickKeertani">Keertani:</label>
+      <select id="pickKeertani" onchange="displayData()">
+        <option value="All">All</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="pickTrackType">Track Type:</label>
+      <select id="pickTrackType" onchange="displayData()">
+        <option value="All">All</option>
+      </select>
+    </div>
 
     <h4 id="trackInfo">Vaheguru Ji. Getting Tracks from Database...</h4>
     <div>
       <button onclick="showShabads()">Toggle Showing Shabads</button>
     </div>
     <div>
-      <button onclick="toggle_descend_order()" id="descend_order_btn">Descending Order</button>
+      <button onclick="toggle_descend_order()" id="descend_order_btn">
+        Descending Order
+      </button>
     </div>
 
     <ol reversed></ol>

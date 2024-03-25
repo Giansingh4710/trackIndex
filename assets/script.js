@@ -66,9 +66,11 @@ function trackNodeBtnClicked(obj_id) {
   const obj = ALL_TRACKS_DATA.find((obj) => obj.id == obj_id)
   const current_playing_audio = document.getElementById('current_playing_audio')
   current_playing_audio.style.display = 'block'
-  document.getElementById('DescOfTrack').innerText = "Description: " + obj.description
-  document.getElementById('playingArtist').innerText = "Keertani: " + obj.artist
-  document.getElementById('trackAdded').innerText = "Added: " + getFormatedTime(obj.created)
+  document.getElementById('DescOfTrack').innerText =
+    'Description: ' + obj.description
+  document.getElementById('playingArtist').innerText = 'Keertani: ' + obj.artist
+  document.getElementById('trackAdded').innerText =
+    'Added: ' + getFormatedTime(obj.created)
 
   document.getElementById('timeStampOfDecs').innerText = obj.timestamp
   document.getElementById('TrackTitle').innerText = getTrackTitle(obj.link)
@@ -79,10 +81,10 @@ function trackNodeBtnClicked(obj_id) {
   document.getElementById('timeStampOfDecs').onclick = function() {
     const timeLst = obj.timestamp.split(':')
     let totalSeconds = 0
-    let muliplier = 1
+    let multiplier = 1
     for (let i = timeLst.length - 1; i > -1; i--) {
-      totalSeconds += muliplier * parseInt(timeLst[i])
-      muliplier *= 60
+      totalSeconds += multiplier * parseInt(timeLst[i])
+      multiplier *= 60
     }
     document.getElementsByTagName('audio')[0].currentTime = totalSeconds
   }
@@ -155,8 +157,7 @@ function displayData(alreadyFiltered = false) {
           <div class="timestamp">Time Stamp: ${obj.timestamp}</div>
           <div class="timeadded">Added: ${getFormatedTime(obj.created)}</div>
         </div>
-        <button class="playTrackBtnWithTitle" onclick="trackNodeBtnClicked(${obj.id
-      })">
+        <button class="playTrackBtnWithTitle" onclick="trackNodeBtnClicked(${obj.id})">
           ${getTrackTitle(obj.link)}
         </button>
       `
@@ -184,7 +185,7 @@ function searchForTrack(e) {
 
     for (const word of wordsEntered) {
       const wordInTrackObj = values.some((line) =>
-        line.toLowerCase().includes(word)
+        line.toLowerCase().includes(word),
       )
       if (!wordInTrackObj) {
         return false
@@ -197,22 +198,39 @@ function searchForTrack(e) {
 
 function putOptsInSelect() {
   const allKeertanis = []
+  const allTypes = []
   ALL_TRACKS_DATA.forEach((track) => {
     if (!allKeertanis.includes(track.artist)) {
       allKeertanis.push(track.artist)
     }
+
+    if (!allTypes.includes(track.type)) {
+      allTypes.push(track.type)
+    }
   })
 
-  const last_picked_keertani = localStorage.getItem('keertani')
-  const select = document.getElementById('pickKeertani')
+  const last_picked_keertani = localStorage.getItem('TrackIndex: keertani')
+  const selectKeertani = document.getElementById('pickKeertani')
   for (const keertani of allKeertanis) {
     const opt = document.createElement('option')
     opt.setAttribute('value', keertani)
     opt.innerText = keertani
-    if (keertani == last_picked_keertani) {
+    if (keertani === last_picked_keertani) {
       opt.selected = true
     }
-    select.appendChild(opt)
+    selectKeertani.appendChild(opt)
+  }
+
+  const last_picked_type = localStorage.getItem('TrackIndex: TrackType')
+  const selectType = document.getElementById('pickTrackType')
+  for (const typee of allTypes) {
+    const opt = document.createElement('option')
+    opt.setAttribute('value', typee)
+    opt.innerText = typee
+    if (typee === last_picked_type) {
+      opt.selected = true
+    }
+    selectType.appendChild(opt)
   }
 }
 
@@ -222,7 +240,7 @@ function filter_keertani_from_url() {
   if (!artist) return
   const select = document.getElementById('pickKeertani')
   for (const opt of select.options) {
-    if (opt.innerText == artist){
+    if (opt.innerText == artist) {
       opt.selected = true
       break
     }
@@ -230,17 +248,22 @@ function filter_keertani_from_url() {
   filterDataByChosenOpt()
 }
 
-
 function filterDataByChosenOpt() {
-  const opt = document.getElementById('pickKeertani').value
-  localStorage.setItem('keertani', opt)
-  if (opt == 'All') {
+  const keertaniOpt = document.getElementById('pickKeertani').value
+  localStorage.setItem('TrackIndex: keertani', keertaniOpt)
+
+  const typeOpt = document.getElementById('pickTrackType').value
+  localStorage.setItem('TrackIndex: TrackType', typeOpt)
+
+  if (keertaniOpt === 'All' && typeOpt === 'All') {
     SHOW_TRACKS_DATA = ALL_TRACKS_DATA
-    return
+  } else {
+    SHOW_TRACKS_DATA = ALL_TRACKS_DATA.filter(
+      (item) =>
+        (typeOpt === item.type || typeOpt === 'All') &&
+        (keertaniOpt === item.artist || keertaniOpt === 'All'),
+    )
   }
-  SHOW_TRACKS_DATA = ALL_TRACKS_DATA.filter((item) => {
-    return opt == item.artist
-  })
 }
 
 function getTrackTitle(link) {
@@ -258,9 +281,12 @@ function showShabads() {
 function toggle_descend_order() {
   SHOW_TRACKS_DATA.reverse()
   displayData(true)
-  const btn = document.getElementById("descend_order_btn")
+  const btn = document.getElementById('descend_order_btn')
   console.log(btn.innerText)
-  btn.innerText = SHOW_TRACKS_DATA[0].id > SHOW_TRACKS_DATA[1].id ? "Ascending Order" : "Descending Order"
+  btn.innerText =
+    SHOW_TRACKS_DATA[0].id > SHOW_TRACKS_DATA[1].id
+      ? 'Ascending Order'
+      : 'Descending Order'
 }
 
 fetch('http://45.76.2.28/trackIndex/util/getData.php')
