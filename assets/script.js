@@ -67,8 +67,10 @@ function trackNodeBtnClicked(obj_id) {
   const current_playing_audio = document.getElementById('current_playing_audio')
   current_playing_audio.style.display = 'block'
   document.getElementById('DescOfTrack').innerText =
-    'Description: ' + obj.description
+    '#' + obj.id + ' Description: ' + obj.description
+
   document.getElementById('playingArtist').innerText = 'Keertani: ' + obj.artist
+  document.getElementById('typeOfTrack').innerText = 'Type: ' + obj.type
   document.getElementById('trackAdded').innerText =
     'Added: ' + getFormatedTime(obj.created)
 
@@ -156,6 +158,7 @@ function displayData(alreadyFiltered = false) {
           <div class="artist">Keertani: ${obj.artist}</div>
           <div class="timestamp">Time Stamp: ${obj.timestamp}</div>
           <div class="timeadded">Added: ${getFormatedTime(obj.created)}</div>
+          <div class="trackType">Type: ${obj.type}</div>
         </div>
         <button class="playTrackBtnWithTitle" onclick="trackNodeBtnClicked(${obj.id})">
           ${getTrackTitle(obj.link)}
